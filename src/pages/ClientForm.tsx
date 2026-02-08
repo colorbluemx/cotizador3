@@ -22,7 +22,7 @@ export default function ClientForm() {
     useEffect(() => {
         if (id && id !== 'new') {
             const fetchClient = async () => {
-                const { data, error } = await supabase.from('clients').select('*').eq('id', id).single()
+                const { data } = await supabase.from('clients').select('*').eq('id', id).single()
                 if (data) {
                     setFormData({
                         name: data.name,

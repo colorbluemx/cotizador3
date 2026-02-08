@@ -11,6 +11,7 @@ import Products from './pages/Products'
 import ProductForm from './pages/ProductForm'
 import Quotes from './pages/Quotes'
 import QuoteEditor from './pages/QuoteEditor'
+import Settings from './pages/Settings'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth()
@@ -71,7 +72,7 @@ function App() {
           <Route path="products/new" element={<ProductForm />} />
           <Route path="products/:id" element={<ProductForm />} />
 
-          <Route path="settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </Router>

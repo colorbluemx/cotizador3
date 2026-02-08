@@ -26,7 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .from('companies')
             .select('*')
             .eq('user_id', userId)
-            .single()
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
         setCompany(data)
     }
 

@@ -22,7 +22,7 @@ export default function ProductForm() {
     useEffect(() => {
         if (id && id !== 'new') {
             const fetchProduct = async () => {
-                const { data, error } = await supabase.from('products').select('*').eq('id', id).single()
+                const { data } = await supabase.from('products').select('*').eq('id', id).single()
                 if (data) {
                     setFormData({
                         name: data.name,
