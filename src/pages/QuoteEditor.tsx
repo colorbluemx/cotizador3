@@ -157,7 +157,10 @@ export default function QuoteEditor() {
                 tax: taxAmount,
                 total,
                 status: 'draft',
-                ...(id === 'new' ? { quote_number: `Q-${Date.now().toString().slice(-4)}` } : {})
+                // Generate quote number if new OR if missing in existing quote
+                ...((id === 'new' || !quoteData.quoteNumber) ? {
+                    quote_number: `Q-${Date.now().toString().slice(-4)}`
+                } : {})
             }
 
             if (id === 'new' || !id) {
@@ -443,7 +446,7 @@ export default function QuoteEditor() {
 
                 {/* Right: Preview (Hidden on mobile) */}
                 <div className="hidden lg:flex w-1/2 bg-gray-900/50 items-center justify-center p-8">
-                    <div ref={componentRef} className="w-full max-w-lg bg-white text-black shadow-2xl rounded-sm p-8 h-full overflow-y-auto">
+                    <div ref={componentRef} className="w-full max-w-lg bg-white text-black shadow-2xl rounded-sm p-8 h-full overflow-y-auto print:max-w-none print:w-full print:h-auto print:overflow-visible print:shadow-none print:m-0 print:p-8">
                         {/* PDF Preview Mockup */}
                         <div className="flex justify-between items-start mb-8">
                             <div>
@@ -460,17 +463,17 @@ export default function QuoteEditor() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <h1 className="text-3xl font-bold text-gray-800 tracking-tight">QUOTE</h1>
-                                <div className="text-gray-500 mt-1"># {quoteData.quoteNumber || 'DRAFT'}</div>
+                                <h1 className="text-3xl font-bold text-gray-800 tracking-tight">COTIZACIÓN</h1>
+                                <div className="text-gray-500 mt-1"># {quoteData.quoteNumber || 'BORRADOR'}</div>
                                 <div className="text-sm text-gray-600 mt-4">
-                                    <strong>Date:</strong> {quoteData.issueDate}<br />
-                                    <strong>Valid Until:</strong> {quoteData.validUntil || '-'}
+                                    <strong>Fecha:</strong> {quoteData.issueDate}<br />
+                                    <strong>Válido Hasta:</strong> {quoteData.validUntil || '-'}
                                 </div>
                             </div>
                         </div>
 
                         <div className="mb-8 p-4 bg-gray-50 rounded-sm">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase mb-2">Bill To</h3>
+                            <h3 className="text-xs font-bold text-gray-400 uppercase mb-2">Cliente</h3>
                             {quoteData.clientId ? (
                                 (() => {
                                     const client = clients.find(c => c.id === quoteData.clientId)
@@ -490,9 +493,9 @@ export default function QuoteEditor() {
                         <table className="w-full text-sm mb-8">
                             <thead>
                                 <tr className="border-b border-gray-300">
-                                    <th className="text-left py-2 font-semibold text-gray-600">Description</th>
-                                    <th className="text-right py-2 font-semibold text-gray-600">Qty</th>
-                                    <th className="text-right py-2 font-semibold text-gray-600">Price</th>
+                                    <th className="text-left py-2 font-semibold text-gray-600">Descripción</th>
+                                    <th className="text-right py-2 font-semibold text-gray-600">Cant.</th>
+                                    <th className="text-right py-2 font-semibold text-gray-600">Precio</th>
                                     <th className="text-right py-2 font-semibold text-gray-600">Total</th>
                                 </tr>
                             </thead>
@@ -518,7 +521,7 @@ export default function QuoteEditor() {
                                     <span>${subtotal.toFixed(2)}</span>
                                 </div>
                                 <div className="text-sm text-gray-600 flex justify-between">
-                                    <span>Tax ({quoteData.taxRate}%):</span>
+                                    <span>Impuesto ({quoteData.taxRate}%):</span>
                                     <span>${taxAmount.toFixed(2)}</span>
                                 </div>
                                 <div className="text-lg font-bold text-gray-900 flex justify-between pt-2 border-t border-gray-200">
@@ -529,10 +532,10 @@ export default function QuoteEditor() {
                         </div>
 
                         <div className="mt-12 pt-8 border-t border-gray-100 text-center text-xs text-gray-400">
-                            <p>Thank you for your business!</p>
+                            <p>¡Gracias por su preferencia!</p>
                             <div className="mt-4 flex items-center justify-center gap-1 opacity-50">
                                 <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
-                                <span>Created with CotizaPro</span>
+                                <span>Creado con CotizaPro</span>
                             </div>
                         </div>
                     </div>

@@ -5,36 +5,37 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: hsl(222 47% 11%);
+  background-color: hsl(0 0% 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Premium Color Palette (can be overridden by user company settings later) */
+  /* Light Theme Palette */
   --primary: 217 91% 60%;
   /* Vibrant Blue */
-  --primary-foreground: 210 40% 98%;
+  --primary-foreground: 0 0% 100%;
 
-  --background: 222 47% 11%;
-  /* Dark Slate, much richer than plain black */
-  --foreground: 210 40% 98%;
+  --background: 0 0% 100%;
+  /* White */
+  --foreground: 222 47% 11%;
+  /* Dark Slate */
 
-  --card: 217 33% 17%;
-  --card-foreground: 210 40% 98%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
 
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20% 65%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
 
-  --accent: 217 91% 60%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222 47% 11%;
 
-  --border: 217 33% 17%;
-  --input: 217 33% 17%;
-  --ring: 224 76% 48%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 217 91% 60%;
 }
 
 a {
@@ -75,16 +76,36 @@ body {
   --color-input: hsl(var(--input));
 }
 
-/* Glassmorphism Utilities */
+/* Glassmorphism Utilities - Adapted for Light Mode */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .glass-card {
-  background: hsl(var(--card) / 0.7);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
-  border: 1px solid hsl(var(--border) / 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@media print {
+  @page {
+    margin: 20mm;
+    size: auto;
+  }
+
+  body {
+    background-color: white;
+    color: black;
+    min-height: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  #root {
+    height: auto;
+    overflow: visible;
+  }
 }

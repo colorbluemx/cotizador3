@@ -59,10 +59,10 @@ export default function Products() {
                 </div>
                 <Link
                     to="/products/new"
-                    className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md font-medium flex items-center gap-2 transition-colors"
+                    className="bg-primary text-white p-2 rounded-full font-semibold flex items-center justify-center transition-all hover:opacity-90 hover:scale-110 shadow-lg shadow-primary/30"
+                    title="New Product"
                 >
-                    <Plus size={18} />
-                    New Product
+                    <Plus size={24} color="white" />
                 </Link>
             </div>
 

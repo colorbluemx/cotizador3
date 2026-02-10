@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Plus, Search, FileText, MoreVertical } from 'lucide-react'
+import { useEffect, useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Plus, Search, FileText, MoreVertical, Trash2, Edit, CheckCircle, XCircle, Send } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { usePlanLimits } from '../hooks/usePlanLimits'
@@ -15,6 +15,19 @@ export default function Quotes() {
     const { canCreateQuote, quoteCount, FREE_LIMIT } = usePlanLimits()
     const [quotes, setQuotes] = useState<Quote[]>([])
     const [loading, setLoading] = useState(true)
+    const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null)
+    const menuRef = useRef<HTMLDivElement>(null)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setActionMenuOpen(null)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     useEffect(() => {
         if (!user) return
@@ -32,6 +45,30 @@ export default function Quotes() {
         fetchQuotes()
     }, [user])
 
+    const deleteQuote = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this quote?')) return
+
+        const { error } = await supabase.from('quotes').delete().eq('id', id)
+        if (error) {
+            console.error('Error deleting quote:', error)
+            alert('Error deleting quote')
+        } else {
+            setQuotes(quotes.filter(q => q.id !== id))
+        }
+        setActionMenuOpen(null)
+    }
+
+    const updateStatus = async (id: string, status: string) => {
+        const { error } = await supabase.from('quotes').update({ status }).eq('id', id)
+        if (error) {
+            console.error('Error updating status:', error)
+            alert('Error updating status')
+        } else {
+            setQuotes(quotes.map(q => q.id === id ? { ...q, status } : q))
+        }
+        setActionMenuOpen(null)
+    }
+
     const getStatusColor = (status: string | null) => {
         switch (status) {
             case 'accepted': return 'bg-green-500/10 text-green-400 border-green-500/20'
@@ -42,10 +79,12 @@ export default function Quotes() {
     }
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Quotes</h1>
-                <h1 className="text-3xl font-bold">Quotes</h1>
+        <div className="p-8">
+            <div className="flex justify-between items-center mb-8">
+                <div>
+                    <h1 className="text-3xl font-bold">Quotes</h1>
+                    <p className="text-gray-400 mt-1">Manage and track your proposals</p>
+                </div>
                 <div className="flex items-center gap-4">
                     {!canCreateQuote && (
                         <span className="text-xs text-red-400 bg-red-400/10 px-3 py-1 rounded-full border border-red-400/20">
@@ -55,12 +94,11 @@ export default function Quotes() {
                     <Link
                         to={canCreateQuote ? "/quotes/new" : "#"}
                         onClick={(e) => !canCreateQuote && e.preventDefault()}
-                        className={`bg-primary text-primary-foreground px-4 py-2 rounded-md font-semibold flex items-center gap-2 transition-opacity ${!canCreateQuote ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'
+                        className={`bg-primary text-white p-2 rounded-full font-semibold flex items-center justify-center transition-all ${!canCreateQuote ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 hover:scale-110 shadow-lg shadow-primary/30'
                             }`}
-                        title={!canCreateQuote ? "Upgrade to Pro to create more quotes" : ""}
+                        title={!canCreateQuote ? "Upgrade to Pro to create more quotes" : "Create New Quote"}
                     >
-                        <Plus size={20} />
-                        New Quote
+                        <Plus size={24} color="white" />
                     </Link>
                 </div>
             </div>
@@ -107,7 +145,11 @@ export default function Quotes() {
                             ) : (
                                 quotes.map((quote) => (
                                     <tr key={quote.id} className="hover:bg-white/5 transition-colors group">
-                                        <td className="p-4 font-mono text-sm">{quote.quote_number}</td>
+                                        <td className="p-4 font-mono text-sm">
+                                            <Link to={`/quotes/${quote.id}`} className="text-primary hover:underline">
+                                                {quote.quote_number || 'Draft'}
+                                            </Link>
+                                        </td>
                                         <td className="p-4 font-medium">{quote.clients?.name || 'Unknown Client'}</td>
                                         <td className="p-4 text-gray-400">{new Date(quote.issue_date || '').toLocaleDateString()}</td>
                                         <td className="p-4 font-bold">
@@ -118,10 +160,70 @@ export default function Quotes() {
                                                 {(quote.status || 'draft').toUpperCase()}
                                             </span>
                                         </td>
-                                        <td className="p-4">
-                                            <button className="text-gray-500 hover:text-white transition-colors">
+                                        <td className="p-4 relative">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    setActionMenuOpen(actionMenuOpen === quote.id ? null : quote.id)
+                                                }}
+                                                className="text-gray-500 hover:text-white transition-colors p-1"
+                                            >
                                                 <MoreVertical size={18} />
                                             </button>
+
+                                            {actionMenuOpen === quote.id && (
+                                                <div
+                                                    ref={menuRef}
+                                                    className="absolute right-8 top-0 z-50 w-48 bg-[#1A1F2C] border border-white/10 rounded-lg shadow-xl py-1 overflow-hidden"
+                                                >
+                                                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Actions
+                                                    </div>
+                                                    <button
+                                                        onClick={() => navigate(`/quotes/${quote.id}`)}
+                                                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white flex items-center gap-2"
+                                                    >
+                                                        <Edit size={14} /> Edit Quote
+                                                    </button>
+
+                                                    <div className="my-1 border-t border-white/5"></div>
+                                                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Set Status
+                                                    </div>
+                                                    <button
+                                                        onClick={() => updateStatus(quote.id, 'draft')}
+                                                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white flex items-center gap-2"
+                                                    >
+                                                        <FileText size={14} /> Draft
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateStatus(quote.id, 'sent')}
+                                                        className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:bg-blue-500/10 flex items-center gap-2"
+                                                    >
+                                                        <Send size={14} /> Sent
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateStatus(quote.id, 'accepted')}
+                                                        className="w-full text-left px-4 py-2 text-sm text-green-400 hover:bg-green-500/10 flex items-center gap-2"
+                                                    >
+                                                        <CheckCircle size={14} /> Accepted
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateStatus(quote.id, 'rejected')}
+                                                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2"
+                                                    >
+                                                        <XCircle size={14} /> Rejected
+                                                    </button>
+
+                                                    <div className="my-1 border-t border-white/5"></div>
+                                                    <button
+                                                        onClick={() => deleteQuote(quote.id)}
+                                                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-900/20 hover:text-red-400 flex items-center gap-2"
+                                                    >
+                                                        <Trash2 size={14} /> Delete
+                                                    </button>
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))
