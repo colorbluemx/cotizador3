@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 
 interface Props {
     data: { name: string; value: number; amount: number; color: string }[]
+    onStatusSelect?: (status: string | null) => void
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -20,7 +21,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return null
 }
 
-export default function StatusDistributionChart({ data }: Props) {
+export default function StatusDistributionChart({ data, onStatusSelect }: Props) {
     if (data.length === 0) {
         return (
             <div className="h-64 flex items-center justify-center text-gray-500">
@@ -43,13 +44,20 @@ export default function StatusDistributionChart({ data }: Props) {
                         dataKey="value"
                         label={({ name, amount, percent }: any) => `${name} (${((percent || 0) * 100).toFixed(0)}%) \n $${amount.toLocaleString()}`}
                         labelLine={true}
+                        onClick={(entry) => onStatusSelect?.(entry.name.toLowerCase())}
+                        style={{ cursor: 'pointer' }}
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                         ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" height={36} />
+                    <Legend
+                        verticalAlign="bottom"
+                        height={36}
+                        onClick={(entry) => entry.value && onStatusSelect?.(entry.value.toLowerCase())}
+                        wrapperStyle={{ cursor: 'pointer' }}
+                    />
                 </PieChart>
             </ResponsiveContainer>
         </div>
