@@ -71,7 +71,7 @@ export default function QuoteEditor() {
                         issueDate: quote.issue_date || '',
                         validUntil: quote.valid_until || '',
                         quoteNumber: quote.quote_number || '',
-                        items: (quote.quote_items as any[]).map(item => ({
+                        items: (quote.quote_items as unknown as any[]).map(item => ({
                             id: item.id,
                             name: item.name,
                             description: item.description || '',
@@ -121,7 +121,7 @@ export default function QuoteEditor() {
         setQuoteData(prev => ({ ...prev, items: [...prev.items, newItem] }))
     }
 
-    const updateItem = (id: string, field: keyof QuoteItem, value: any) => {
+    const updateItem = (id: string, field: keyof QuoteItem, value: string | number) => {
         setQuoteData(prev => ({
             ...prev,
             items: prev.items.map(item => {

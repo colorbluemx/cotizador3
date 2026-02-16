@@ -68,7 +68,7 @@ export default function DashboardHome() {
                     color: colors[status] || '#CBD5E1'
                 }))
 
-                setQuotes(quotesData as any)
+                setQuotes((quotesData as unknown) as Quote[])
                 setStats({ total, pending, revenue, distribution })
 
                 // Default to first available status if none selected
@@ -100,7 +100,7 @@ export default function DashboardHome() {
 
     return (
         <div className="p-8 space-y-8">
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">Panel de Control</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard

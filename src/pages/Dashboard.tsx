@@ -4,11 +4,11 @@ import { LayoutDashboard, FileText, Users, Settings, LogOut, Package, Menu, X } 
 import { supabase } from '../lib/supabase'
 
 const navLinks = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-    { icon: FileText, label: 'Quotes', path: '/quotes' },
-    { icon: Users, label: 'Clients', path: '/clients' },
-    { icon: Package, label: 'Products', path: '/products' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
+    { icon: LayoutDashboard, label: 'Panel', path: '/' },
+    { icon: FileText, label: 'Cotizaciones', path: '/quotes' },
+    { icon: Users, label: 'Clientes', path: '/clients' },
+    { icon: Package, label: 'Productos', path: '/products' },
+    { icon: Settings, label: 'Ajustes', path: '/settings' },
 ]
 
 export default function Dashboard() {
@@ -86,13 +86,13 @@ export default function Dashboard() {
                         className="flex items-center gap-3 px-3 py-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md w-full transition-colors"
                     >
                         <LogOut size={20} />
-                        <span>Sign Out</span>
+                        <span>Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto relative w-full pt-16 md:pt-0">
+            <main className="flex-1 overflow-auto relative min-w-0 pt-16 md:pt-0">
                 <Outlet />
             </main>
         </div>
