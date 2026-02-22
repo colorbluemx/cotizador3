@@ -92,8 +92,8 @@ body {
 
 @media print {
   @page {
-    margin: 20mm;
-    size: auto;
+    size: A4;
+    margin: 10mm;
   }
 
   body {
